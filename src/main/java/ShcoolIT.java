@@ -16,14 +16,15 @@ public class ShcoolIT {
         javaDev.Courses.add(java);
         Student yevhnii = new Student("Yevhenii", "Hurov", javaDev);
         yevhnii.Curriculum.StartProgram();
-        System.out.println( LocalDateTime.of(2022,04,20,20,0));
+        System.out.println(LocalDateTime.of(2022, 04, 20, 17, 0));
         System.out.println(yevhnii.Curriculum.lastDayStudy());
         System.out.println(yevhnii.Curriculum.getFinishInfo());
         if (yevhnii.Curriculum.getFinishInfo().Finished) {
             System.out.println(yevhnii.FirstName + " " + yevhnii.LastName + " (" + javaDev.Name + ") - Обучение закончено. После окончания прошло " +
                     yevhnii.Curriculum.getFinishInfo().Days + " д " + yevhnii.Curriculum.getFinishInfo().Hours + " ч");
-        } else
+        } else {
             System.out.println(yevhnii.FirstName + " " + yevhnii.LastName + " (" + javaDev.Name + ") - Обучение не закончено. До окончания осталось " +
                     yevhnii.Curriculum.getFinishInfo().Days + " д " + yevhnii.Curriculum.getFinishInfo().Hours + " ч");
+        }
     }
 }

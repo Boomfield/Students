@@ -12,6 +12,8 @@ public class Curriculum {
     public String Name;
     private LocalDateTime dateStarted;
     public ArrayList<Course> Courses = new ArrayList<>();
+    LocalDateTime nowDateTime = LocalDateTime.of(2022, 04, 20, 17, 0);
+    Duration finishInfo = new Duration(0, 0, true);
 
     public Curriculum(LocalTime workingStartTime, LocalTime workingEndTime, String name) {
         WorkingStartTime = workingStartTime;
@@ -28,33 +30,6 @@ public class Curriculum {
 //    EndDay 46hours 5 days 6 hours
 //    NotFinished 6/18/22 15:00 63days
 //    Finished 4/12/22 11:00
-    public Duration getFinishInfo() {
-        LocalDateTime nowDateTime = LocalDateTime.of(2022, 04, 20, 20, 0);
-        Duration finishInfo = new Duration(0, 0, true);
-        LocalDateTime llastDayStudy = lastDayStudy();
-        long daysToEnd = ChronoUnit.DAYS.between(lastDayStudy(), nowDateTime);
-        long hoursToEnd = llastDayStudy.getHour() - nowDateTime.getHour();
-        long hours = 0;
-        if (llastDayStudy.compareTo(nowDateTime) < 0) {
-            finishInfo.Finished = false;
-            finishInfo.Days = (int) Math.abs(daysToEnd);
-            finishInfo.Hours = (int) hoursToEnd;
-        }
-        if (hoursToEnd < 0) {
-            hours = WorkingEndTime.getHour() - nowDateTime.getHour() + llastDayStudy.getHour() - WorkingStartTime.getHour();
-            finishInfo.Hours = (int) hours;
-            finishInfo.Days = (int) Math.abs(daysToEnd);
-            finishInfo.Finished = false;
-
-        }
-        if (daysToEnd > 0) {
-            finishInfo.Finished = true;
-            finishInfo.Days = (int) daysToEnd;
-            finishInfo.Hours = (int) Math.abs(hoursToEnd);
-        }
-        return finishInfo;
-    }
-
     public LocalDateTime lastDayStudy() {
         int allHours = Courses.stream().map(x -> x.Duration).reduce(0, (x, y) -> x + y);
         int days = allHours / 8;
@@ -67,5 +42,48 @@ public class Curriculum {
         } else
             return lastDayStudy.plusHours(hours);
     }
+
+    public Duration getFinishInfo() {
+        LocalDateTime llastDayStudy = lastDayStudy();
+
+        if (llastDayStudy.compareTo(nowDateTime) > 0) {
+            currNotOverHowTime();
+        }
+        if (howDaysTime() > 0) {
+            currOverHowTime();
+        }
+        return finishInfo;
+    }
+
+
+    public long howDaysTime() {
+
+        long daysToEnd = ChronoUnit.DAYS.between(lastDayStudy(), nowDateTime);
+
+        return daysToEnd;
+    }
+
+    public long howHoursTime() {
+        long hoursToEnd = lastDayStudy().getHour() - nowDateTime.getHour();
+        return hoursToEnd;
+    }
+
+    public void currNotOverHowTime() {
+        LocalDateTime llastDayStudy = lastDayStudy();
+        long hours = 0;
+        finishInfo.Finished = false;
+        finishInfo.Days = (int) Math.abs(howDaysTime());
+
+        if (howHoursTime() < 0) {
+            hours = WorkingEndTime.getHour() - nowDateTime.getHour() + llastDayStudy.getHour() - WorkingStartTime.getHour();
+            finishInfo.Hours = (int) hours;
+        } else
+            finishInfo.Hours = (int) howHoursTime();
+    }
+
+    public void currOverHowTime() {
+        finishInfo = new Duration((int) howDaysTime(), (int) Math.abs(howHoursTime()), true);
+    }
+
 
 }
